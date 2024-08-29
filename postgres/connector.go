@@ -1,4 +1,4 @@
-package pgconnector
+package postgres
 
 import (
 	"bytes"
