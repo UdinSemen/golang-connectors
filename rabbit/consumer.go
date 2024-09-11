@@ -47,6 +47,9 @@ func (c ConnectorImpl) Consume(
 
 	go func() {
 		for d := range delivery {
+			if conf.publishConfig.publishing.CorrelationId != "" && d.CorrelationId != conf.publishConfig.publishing.CorrelationId {
+				continue
+			}
 			if !conf.synchronous {
 				go consumerFunc(d)
 			} else {
