@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,7 @@ type PgConnector interface {
 }
 
 type Connector struct {
+	poolMu      sync.Mutex
 	pool        *pgxpool.Pool
 	pingTimeout time.Duration
 }
@@ -120,6 +122,8 @@ func CreateConfig(
 }
 
 func (p *Connector) GetPool() *pgxpool.Pool {
+	p.poolMu.Lock()
+	defer p.poolMu.Unlock()
 	return p.pool
 }
 
