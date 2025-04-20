@@ -68,6 +68,34 @@ func NewConnector(config *Config) (*ConnectorImpl, error) {
 	}, nil
 }
 
+func NewConnectorWithConfig(config *Config, amqpConfig amqp.Config) (*ConnectorImpl, error) {
+	if config == nil {
+		return nil, fmt.Errorf("config is empty")
+	}
+
+	conn, err := amqp.DialConfig(fmt.Sprintf(`amqp://%v:%v@%v:%v/%v`,
+		config.Username,
+		config.Password,
+		config.Host,
+		config.Port,
+		config.Path),
+		amqpConfig,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error with connection to rabbitmq: %w", err)
+	}
+
+	ch, err := conn.Channel()
+	if err != nil {
+		return nil, fmt.Errorf("error with opening channel: %w", err)
+	}
+
+	return &ConnectorImpl{
+		connection: conn,
+		channel:    ch,
+	}, nil
+}
+
 func (c ConnectorImpl) GetConnection() *amqp.Connection {
 	return c.connection
 }
