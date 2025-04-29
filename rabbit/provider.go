@@ -47,20 +47,20 @@ func (c *ConnectorImpl) PublishWithNewCh(
 		conf = opt.apply(conf)
 	}
 
-	q, err := c.queueDeclare(conf)
-	if err != nil {
-		return fmt.Errorf("error with queue declare: %w", err)
-	}
-
 	ch, err := c.connection.Channel()
 	if err != nil {
 		return fmt.Errorf("failed to open channel: %w", err)
 	}
 	defer func(ch *amqp.Channel) {
-		if err = ch.Close(); err != nil {
-			log.Printf("failed to close channel: %v", err)
+		if errCl := ch.Close(); err != nil {
+			log.Printf("failed to close channel: %v", errCl)
 		}
 	}(ch)
+
+	q, err := c.queueDeclareWithCh(ch, conf)
+	if err != nil {
+		return fmt.Errorf("error with queue declare: %w", err)
+	}
 
 	return ch.PublishWithContext(
 		ctx,

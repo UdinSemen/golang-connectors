@@ -12,3 +12,14 @@ func (c *ConnectorImpl) queueDeclare(conf config) (amqp.Queue, error) {
 		conf.queueConfig.args,
 	)
 }
+
+func (c *ConnectorImpl) queueDeclareWithCh(ch *amqp.Channel, conf config) (amqp.Queue, error) {
+	return ch.QueueDeclare(
+		conf.queueConfig.queueName,
+		conf.queueConfig.durableQueue,
+		conf.queueConfig.autoDelete,
+		conf.queueConfig.exclusive,
+		conf.queueConfig.noWait,
+		conf.queueConfig.args,
+	)
+}
