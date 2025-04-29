@@ -3,6 +3,7 @@ package rabbit
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -37,6 +38,7 @@ type Connector interface {
 }
 
 type ConnectorImpl struct {
+	mu         sync.Mutex
 	connection *amqp.Connection
 	channel    *amqp.Channel
 }
@@ -96,14 +98,16 @@ func NewConnectorWithConfig(config *Config, amqpConfig amqp.Config) (*ConnectorI
 	}, nil
 }
 
-func (c ConnectorImpl) GetConnection() *amqp.Connection {
+func (c *ConnectorImpl) GetConnection() *amqp.Connection {
 	return c.connection
 }
 
-func (c ConnectorImpl) GetChannel() *amqp.Channel {
+func (c *ConnectorImpl) GetChannel() *amqp.Channel {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	return c.channel
 }
 
-func (c ConnectorImpl) CloseConnection() error {
+func (c *ConnectorImpl) CloseConnection() error {
 	return c.connection.Close()
 }

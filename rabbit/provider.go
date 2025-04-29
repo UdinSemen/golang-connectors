@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (c ConnectorImpl) Publish(
+func (c *ConnectorImpl) Publish(
 	ctx context.Context,
 	queryName string,
 	body []byte,
@@ -22,7 +22,7 @@ func (c ConnectorImpl) Publish(
 		return fmt.Errorf("error with queue declare: %w", err)
 	}
 
-	return c.channel.PublishWithContext(
+	return c.GetChannel().PublishWithContext(
 		ctx,
 		"",
 		q.Name,

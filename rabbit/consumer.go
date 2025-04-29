@@ -6,7 +6,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func (c ConnectorImpl) Consume(
+func (c *ConnectorImpl) Consume(
 	queryName string,
 	consumerFunc func(amqp.Delivery),
 	opts ...ConfigOption,
@@ -23,7 +23,7 @@ func (c ConnectorImpl) Consume(
 	}
 
 	if conf.qos != nil {
-		if err = c.channel.Qos(
+		if err = c.GetChannel().Qos(
 			conf.qos.prefetchCount,
 			conf.qos.prefetchSize,
 			conf.qos.global,

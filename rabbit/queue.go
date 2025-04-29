@@ -2,7 +2,7 @@ package rabbit
 
 import amqp "github.com/rabbitmq/amqp091-go"
 
-func (c ConnectorImpl) queueDeclare(conf config) (amqp.Queue, error) {
+func (c *ConnectorImpl) queueDeclare(conf config) (amqp.Queue, error) {
 	return c.GetChannel().QueueDeclare(
 		conf.queueConfig.queueName,
 		conf.queueConfig.durableQueue,
