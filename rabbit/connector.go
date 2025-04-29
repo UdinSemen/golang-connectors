@@ -35,6 +35,12 @@ type Connector interface {
 		body []byte,
 		queueOpts ...ConfigOption,
 	) error
+	PublishWithNewCh(
+		ctx context.Context,
+		queryName string,
+		body []byte,
+		queueOpts ...ConfigOption,
+	) error
 }
 
 type ConnectorImpl struct {
